@@ -203,6 +203,15 @@ def _detect_fraud_rings(
             origin_node = max(out_counts, key=out_counts.get)
             exit_node = max(in_counts, key=in_counts.get)
 
+            # If origin and exit resolved to the same node (tie-break), pick the
+            # next highest in-degree node as the exit so they are always distinct.
+            if origin_node == exit_node and len(members) > 1:
+                sorted_in = sorted(in_counts.items(), key=lambda x: x[1], reverse=True)
+                for node, _ in sorted_in:
+                    if node != origin_node:
+                        exit_node = node
+                        break
+
             # ── IBM pattern identification ──
             ring_txs = []
             for m in members:
