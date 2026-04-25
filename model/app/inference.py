@@ -1,6 +1,6 @@
 """
 Inference engine: run model, compute account scores, detect fraud rings, build report.
-Mirrors the post-training analysis cells from the notebook.
+Mirrors the post-training analysis cells from trail-3-money-muling.ipynb.
 """
 
 import time
@@ -16,6 +16,57 @@ from app.config import SUSPICION_THRESHOLD, MAX_TRANSACTIONS_PER_ACCOUNT, DEVICE
 from app.model_loader import EdgeGAT
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# IBM pattern identification (from notebook: identify_ibm_pattern)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _identify_ibm_pattern(acc_id: str, transactions: list[dict]) -> str:
+    """
+    Analyzes transaction topology to map to IBM's 8 laundering patterns.
+    Directly ported from the training notebook.
+    """
+    senders = set(tx["sender_id"] for tx in transactions if tx["sender_id"] != acc_id)
+    receivers = set(tx["receiver_id"] for tx in transactions if tx["receiver_id"] != acc_id)
+
+    in_degree = len(senders)
+    out_degree = len(receivers)
+
+    # 1. Simple Cycle: A -> B -> A
+    if any(tx["sender_id"] == tx["receiver_id"] for tx in transactions):
+        return "Simple Cycle"
+
+    # 2. Fan-out: One source to many destinations
+    if in_degree == 1 and out_degree > 3:
+        return "Fan-out"
+
+    # 3. Fan-in: Many sources to one destination
+    if in_degree > 3 and out_degree == 1:
+        return "Fan-in"
+
+    # 4. Gather-Scatter: Many in, then many out
+    if in_degree > 2 and out_degree > 2:
+        return "Gather-scatter"
+
+    # 5. Scatter-Gather: Out to many, then back to one
+    if in_degree > 3 and out_degree > 3:
+        return "Scatter-gather"
+
+    # 6. Bipartite: Two distinct groups (Money Mules)
+    if in_degree >= 5 and out_degree >= 5:
+        return "Bipartite"
+
+    # 7. Stack: Layering through multiple accounts
+    if len(transactions) > 10 and in_degree > 1:
+        return "Stack"
+
+    # 8. Random: High volume but no clear structure
+    return "Random"
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Edge probabilities
+# ═══════════════════════════════════════════════════════════════════════════
+
 @torch.no_grad()
 def _get_edge_probs(model: EdgeGAT, data: Data) -> np.ndarray:
     """Run forward pass and return per-edge laundering probabilities."""
@@ -24,6 +75,10 @@ def _get_edge_probs(model: EdgeGAT, data: Data) -> np.ndarray:
     probs = F.softmax(logits, dim=-1)[:, 1].cpu().numpy()
     return probs
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Account-level scoring
+# ═══════════════════════════════════════════════════════════════════════════
 
 def _build_account_scores(
     all_probs: np.ndarray,
@@ -80,33 +135,47 @@ def _build_account_scores(
     return dict(account_scores), dict(account_trans_count), dict(account_transactions)
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Fraud ring detection (from notebook: detect_fraud_rings)
+# ═══════════════════════════════════════════════════════════════════════════
+
 def _detect_fraud_rings(
     all_probs: np.ndarray,
     data: Data,
     account_scores: dict,
+    account_transactions: dict,
     threshold: float,
 ) -> dict:
     """
     Detect fraud rings via BFS connected-component analysis
     over the subgraph of suspicious edges.
+
+    Includes:
+    - Origin / exit node detection (highest out-flow / in-flow)
+    - IBM pattern identification
     """
     suspicious_indices = np.where(all_probs >= threshold)[0]
     idx2node = data.idx2node if hasattr(data, "idx2node") else {}
     src_all = data.edge_index[0].cpu().numpy()
     dst_all = data.edge_index[1].cpu().numpy()
 
-    adj = defaultdict(set)
+    # Directed adjacency for flow analysis (who sent to whom)
+    adj_directed = defaultdict(list)
+    # Undirected adjacency for finding the cluster/ring
+    adj_undirected = defaultdict(set)
+
     for eidx in suspicious_indices:
         s = idx2node.get(int(src_all[eidx]), f"ACC_{src_all[eidx]}")
         d = idx2node.get(int(dst_all[eidx]), f"ACC_{dst_all[eidx]}")
-        adj[s].add(d)
-        adj[d].add(s)
+        adj_directed[s].append(d)
+        adj_undirected[s].add(d)
+        adj_undirected[d].add(s)
 
     visited = set()
     rings = {}
     ring_id = 0
 
-    for start in adj:
+    for start in adj_undirected:
         if start in visited:
             continue
         members = []
@@ -115,29 +184,56 @@ def _detect_fraud_rings(
         while queue:
             node = queue.popleft()
             members.append(node)
-            for nb in adj[node]:
+            for nb in adj_undirected[node]:
                 if nb not in visited:
                     visited.add(nb)
                     queue.append(nb)
+
         if len(members) >= 2:
+            # ── Origin / Exit node logic ──
+            in_counts = {m: 0 for m in members}
+            out_counts = {m: 0 for m in members}
+
+            for m in members:
+                for neighbor in adj_directed[m]:
+                    if neighbor in in_counts:
+                        out_counts[m] += 1
+                        in_counts[neighbor] += 1
+
+            origin_node = max(out_counts, key=out_counts.get)
+            exit_node = max(in_counts, key=in_counts.get)
+
+            # ── IBM pattern identification ──
+            ring_txs = []
+            for m in members:
+                ring_txs.extend(account_transactions.get(m, []))
+
+            pattern = _identify_ibm_pattern(members[0], ring_txs)
             risk = float(np.mean([account_scores.get(m, 0) for m in members]))
+
             rings[f"RING_{ring_id:03d}"] = {
                 "member_accounts": members,
-                "pattern_type": "network_cluster",
+                "pattern_type": pattern,
                 "risk_score": risk,
+                "origin": origin_node,
+                "destination": exit_node,
             }
             ring_id += 1
 
     return rings
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Report generation (from notebook: generate_report)
+# ═══════════════════════════════════════════════════════════════════════════
+
 def run_inference(model: EdgeGAT, data: Data, df, threshold: float = None) -> dict:
     """
     Full inference pipeline:
       1. Get edge probabilities
       2. Build account-level suspicion scores
-      3. Detect fraud rings
-      4. Generate structured report
+      3. Detect fraud rings (with IBM pattern + flow analysis)
+      4. Generate structured report matching notebook output
 
     Parameters
     ----------
@@ -148,7 +244,7 @@ def run_inference(model: EdgeGAT, data: Data, df, threshold: float = None) -> di
 
     Returns
     -------
-    dict in the format:
+    dict matching the notebook's generate_report() format:
     {
       "suspicious_accounts": [...],
       "fraud_rings": [...],
@@ -168,68 +264,78 @@ def run_inference(model: EdgeGAT, data: Data, df, threshold: float = None) -> di
         all_probs, data, df, threshold
     )
 
-    # Step 3: fraud rings
-    fraud_rings = _detect_fraud_rings(all_probs, data, account_scores, threshold)
+    # Step 3: fraud rings (with origin/exit + IBM patterns)
+    fraud_rings = _detect_fraud_rings(
+        all_probs, data, account_scores, account_transactions, threshold
+    )
 
-    # Step 4: build report
-    # Map accounts to their ring IDs
-    account_ring_map = {}
+    # Step 4: build report (matching notebook generate_report format)
+    formatted_rings = []
     for rid, info in fraud_rings.items():
-        for member in info["member_accounts"]:
-            account_ring_map[member] = rid
+        # Build per-ring account details with roles
+        ring_accounts = []
+        for acc_id in info["member_accounts"]:
+            # Determine role
+            if acc_id == info["origin"]:
+                role = "Originator"
+            elif acc_id == info["destination"]:
+                role = "Exit Point"
+            else:
+                role = "Intermediary / Mule"
 
-    suspicious_accounts = []
-    for acc_id, score in account_scores.items():
-        ring_id = account_ring_map.get(acc_id)
+            # Build pattern list
+            acc_txs = account_transactions.get(acc_id, [])
+            pattern_list = [info["pattern_type"]]
+            if len(acc_txs) > 10:
+                pattern_list.append("high_velocity")
 
-        # Include account if its score is high, OR if it's a member of a detected fraud ring.
-        if score < threshold * 100 and not ring_id:
-            continue
+            score = account_scores.get(acc_id, 0.0)
+            if score > 80:
+                pattern_list.append("high_risk_score")
 
-        # Pattern tags
-        patterns = []
-        tx_count = account_trans_count.get(acc_id, 0)
-        if tx_count > 5:
-            patterns.append("high_velocity")
-        if ring_id:
-            patterns.append("network_cluster")
-        if score > 80:
-            patterns.append("high_risk_score")
+            ring_accounts.append({
+                "account_id": acc_id,
+                "role": role,
+                "suspicion_score": round(score, 2),
+                "detected_patterns": pattern_list,
+            })
 
-        suspicious_accounts.append({
-            "account_id": acc_id,
-            "suspicion_score": round(score, 2),
-            "detected_patterns": patterns,
-            "ring_id": ring_id,
-            "transactions": account_transactions.get(acc_id, []),
-        })
+        # Get transaction sample for this ring
+        ring_tx_sample = []
+        for m in info["member_accounts"]:
+            ring_tx_sample.extend(account_transactions.get(m, []))
 
-    # Sort by suspicion score descending
-    suspicious_accounts.sort(key=lambda x: x["suspicion_score"], reverse=True)
-
-    fraud_rings_list = []
-    for rid, info in fraud_rings.items():
-        ring_tx_map = {}
-        for member in info["member_accounts"]:
-            for tx in account_transactions.get(member, []):
-                ring_tx_map[tx["transaction_id"]] = tx
-        
-        fraud_rings_list.append({
+        formatted_rings.append({
             "ring_id": rid,
-            "member_accounts": info["member_accounts"],
-            "pattern_type": info["pattern_type"],
-            "risk_score": round(info["risk_score"], 2),
-            "transactions": list(ring_tx_map.values()),
+            "flow_analysis": {
+                "origin_node": info["origin"],
+                "exit_node": info["destination"],
+                "total_hop_count": len(info["member_accounts"]) - 1,
+            },
+            "accounts": ring_accounts,
+            "transactions": ring_tx_sample[:10],   # top 10 for context
+            "context": {
+                "time_window": datetime.now().strftime("%Y-%m-%d"),
+                "analysis_type": "fraud_ring_explanation",
+                "pattern_identified": info["pattern_type"],
+            },
         })
+
+    # Flatten suspicious accounts from rings (matching notebook)
+    suspicious_accounts = []
+    for ring in formatted_rings:
+        for acc in ring["accounts"]:
+            if acc["suspicion_score"] > threshold * 100:
+                suspicious_accounts.append(acc)
+    suspicious_accounts.sort(key=lambda x: x["suspicion_score"], reverse=True)
 
     processing_time = round(time.time() - t0, 3)
 
     report = {
         "suspicious_accounts": suspicious_accounts,
-        "fraud_rings": fraud_rings_list,
+        "fraud_rings": formatted_rings,
         "summary": {
             "total_accounts_analyzed": data.num_nodes,
-            "suspicious_accounts_flagged": len(suspicious_accounts),
             "fraud_rings_detected": len(fraud_rings),
             "processing_time_seconds": processing_time,
         },
