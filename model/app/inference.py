@@ -300,10 +300,14 @@ def run_inference(model: EdgeGAT, data: Data, df, threshold: float = None) -> di
                 "detected_patterns": pattern_list,
             })
 
-        # Get transaction sample for this ring
+        # Get all unique transactions for this ring
         ring_tx_sample = []
+        seen_txs = set()
         for m in info["member_accounts"]:
-            ring_tx_sample.extend(account_transactions.get(m, []))
+            for tx in account_transactions.get(m, []):
+                if tx["transaction_id"] not in seen_txs:
+                    seen_txs.add(tx["transaction_id"])
+                    ring_tx_sample.append(tx)
 
         formatted_rings.append({
             "ring_id": rid,
@@ -313,7 +317,7 @@ def run_inference(model: EdgeGAT, data: Data, df, threshold: float = None) -> di
                 "total_hop_count": len(info["member_accounts"]) - 1,
             },
             "accounts": ring_accounts,
-            "transactions": ring_tx_sample[:10],   # top 10 for context
+            "transactions": ring_tx_sample,   # Return all unique transactions
             "context": {
                 "time_window": datetime.now().strftime("%Y-%m-%d"),
                 "analysis_type": "fraud_ring_explanation",
