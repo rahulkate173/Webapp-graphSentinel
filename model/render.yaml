@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: graphsentinel
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MODEL_DIR
+        value: models
+      - key: SUSPICION_THRESHOLD
+        value: "0.5"
+      - key: PORT
+        value: "8000"
