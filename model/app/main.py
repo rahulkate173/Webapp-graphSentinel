@@ -68,6 +68,16 @@ app.add_middleware(
 # Routes
 # ═══════════════════════════════════════════════════════════════════════════
 
+@app.get("/")
+async def root():
+    """Root endpoint — server info."""
+    return {
+        "name": "GraphSentinel",
+        "version": "1.0",
+        "status": _model is not None,
+        "model_name": _model_name,
+    }
+
 @app.get("/health", response_model=HealthResponse)
 async def health():
     """Health check endpoint."""
