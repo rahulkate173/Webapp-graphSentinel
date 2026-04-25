@@ -28,26 +28,48 @@ class TransactionDetail(BaseModel):
 
 
 class SuspiciousAccount(BaseModel):
+    """Top-level suspicious account (flattened from rings)."""
     account_id: str
+    role: str                               # "Originator" | "Exit Point" | "Intermediary / Mule"
     suspicion_score: float
     detected_patterns: list[str]
-    ring_id: Optional[str] = None
-    transactions: list[TransactionDetail]
+
+
+class RingFlowAnalysis(BaseModel):
+    """Origin → Exit money flow metadata for a ring."""
+    origin_node: str
+    exit_node: str
+    total_hop_count: int
+
+
+class RingAccount(BaseModel):
+    """Per-account detail inside a fraud ring."""
+    account_id: str
+    role: str
+    suspicion_score: float
+    detected_patterns: list[str]
+
+
+class RingContext(BaseModel):
+    """Context metadata for a fraud ring."""
+    time_window: str
+    analysis_type: str = "fraud_ring_explanation"
+    pattern_identified: str = ""
 
 
 class FraudRing(BaseModel):
     ring_id: str
-    member_accounts: list[str]
-    pattern_type: str
-    risk_score: float
+    flow_analysis: RingFlowAnalysis
+    accounts: list[RingAccount]
     transactions: list[TransactionDetail] = []
+    context: RingContext
 
 
 class Summary(BaseModel):
     total_accounts_analyzed: int
-    suspicious_accounts_flagged: int
     fraud_rings_detected: int
     processing_time_seconds: float
+    dataset: Optional[str] = None
 
 
 class PredictResponse(BaseModel):
@@ -61,11 +83,21 @@ class PredictResponse(BaseModel):
 # ═══════════════════════════════════════════════════════════════════════════
 
 # ── Request ──
+# Mirrors the fraud-ring object produced by generate_report() in the
+# training notebook (trail-3-money-muling.ipynb).
+
+class FlowAnalysis(BaseModel):
+    """Origin → Exit money flow metadata."""
+    origin_node: str
+    exit_node: str
+    total_hop_count: int
+
 
 class ExplainableAccountInput(BaseModel):
     account_id: str
+    role: str                       # "Originator" | "Exit Point" | "Intermediary / Mule"
     suspicion_score: float
-    detected_patterns: list[str]
+    detected_patterns: list[str]    # IBM patterns + velocity/risk flags
 
 
 class ExplainableTransactionInput(BaseModel):
@@ -79,10 +111,12 @@ class ExplainableTransactionInput(BaseModel):
 class ExplainableContext(BaseModel):
     time_window: str
     analysis_type: str = "fraud_ring_explanation"
+    pattern_identified: str = ""    # IBM pattern, e.g. "Simple Cycle", "Fan-out", "Random"
 
 
 class PredictExplainableRequest(BaseModel):
     ring_id: str
+    flow_analysis: FlowAnalysis
     accounts: list[ExplainableAccountInput]
     transactions: list[ExplainableTransactionInput]
     context: ExplainableContext
