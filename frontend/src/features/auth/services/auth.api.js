@@ -4,16 +4,10 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com';
 const api = axios.create({
   baseURL: `${BASE_URL}/api`,
+  withCredentials: true,
 });
 
-// Interceptor to add auth token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Removed localstorage interceptor as we now use httpOnly cookies
 
 export const loginUser = async (data) => {
   return await api.post('/auth/login', data);

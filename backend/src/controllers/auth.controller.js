@@ -8,7 +8,11 @@ async function sendTokenResponse(user, res, message) {
     }, CONFIG.JWT_SECRET, {
         expiresIn: "7d"
     })
-    res.cookie("token", token)
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+    })
     res.status(200).json({
         success: true,
         message,
@@ -77,7 +81,7 @@ async function LoginController(req, res) {
 }
 async function LogoutController(req, res) {
     // Clear the auth cookie server-side
-    res.clearCookie('token', { httpOnly: true, sameSite: 'strict' });
+    res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'none' });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 }
 export default { RegisterController, LoginController, GetMeController, LogoutController }

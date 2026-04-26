@@ -27,10 +27,10 @@ export const register = createAsyncThunk('auth/register', async (data, { rejectW
 
 const initialState = {
   user: null,
-  token: localStorage.getItem('token') || null,
   loading: false,
   error: null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  isAuthenticated: false, // We rely on /auth/me to verify
+  isCheckingAuth: true, // True initially to wait for /auth/me
 };
 
 const authSlice = createSlice({
@@ -39,13 +39,16 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('token');
     },
     setUser: (state, action) => {
       state.user = action.payload;
+      state.isAuthenticated = !!action.payload;
+      state.isCheckingAuth = false;
+    },
+    setCheckingAuth: (state, action) => {
+      state.isCheckingAuth = action.payload;
     },
     clearError: (state) => {
       state.error = null;
@@ -62,8 +65,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        state.token = action.payload.token;
-        if(action.payload.token) localStorage.setItem('token', action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -78,8 +79,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        state.token = action.payload.token;
-        if(action.payload.token) localStorage.setItem('token', action.payload.token);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -88,6 +87,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setUser, clearError } = authSlice.actions;
+export const { logout, setUser, setCheckingAuth, clearError } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { login, register, logout as logoutAction, setUser, clearError } from '../auth.slice';
+import { login, register, logout as logoutAction, setUser, setCheckingAuth, clearError } from '../auth.slice';
 import { getCurrentUser as fetchCurrentUserApi } from '../services/auth.api';
 
 export const useAuth = () => {
@@ -19,14 +19,15 @@ export const useAuth = () => {
   };
 
   const fetchCurrentUser = async () => {
+    dispatch(setCheckingAuth(true));
     try {
-      if (authState.token) {
-        const response = await fetchCurrentUserApi();
-        dispatch(setUser(response.data.user));
-      }
+      const response = await fetchCurrentUserApi();
+      dispatch(setUser(response.data.user));
     } catch (error) {
       console.error('Failed to fetch current user', error);
-      dispatch(logoutAction());
+      dispatch(setUser(null));
+    } finally {
+      dispatch(setCheckingAuth(false));
     }
   };
 

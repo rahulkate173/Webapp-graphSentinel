@@ -15,7 +15,6 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1
  * @returns {Promise<object>}        ml_response from backend
  */
 export const runMlAnalysis = async (transactionsUrl, accountsUrl) => {
-  const token = localStorage.getItem('token');
   const response = await axios.post(
     `${BASE_URL}/api/ml/analyze`,
     {
@@ -23,7 +22,6 @@ export const runMlAnalysis = async (transactionsUrl, accountsUrl) => {
       accounts_file_url: accountsUrl,
     },
     {
-      headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     }
   );
