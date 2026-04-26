@@ -65,3 +65,25 @@
 .app-sidebar__logout-btn:hover {
   background-color: #fef2f2 !important;
 }
+
+.app-sidebar__apikey-btn {
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 0.25rem;
+}
+
+.app-sidebar__apikey-btn:hover {
+  background-color: #eff6ff !important;
+}
+
+.app-sidebar__apikey-btn .app-sidebar__link-icon {
+  color: #3b82f6 !important;
+}
+
+.app-sidebar__apikey-btn .app-sidebar__link-text {
+  color: #1e40af;
+  font-weight: 600;
+}

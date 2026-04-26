@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Network, MoreVertical, ArrowLeft, LogOut, User } from 'lucide-react';
+import { Network, MoreVertical, ArrowLeft, LogOut, User, KeyRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/hooks/useAuth';
+import ApiKeyModal from './ApiKeyModal';
 import '../styles/header.css';
 
 const Header = () => {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
     const profileRef = useRef(null);
 
     // Get initials for avatar
@@ -69,6 +71,13 @@ const Header = () => {
                                             <User size={16} />
                                             <span>Role: {user.role || 'User'}</span>
                                         </div>
+                                        <button
+                                            className="app-header__apikey-btn"
+                                            onClick={() => { setIsApiKeyModalOpen(true); setIsProfileOpen(false); }}
+                                        >
+                                            <KeyRound size={16} />
+                                            <span>Get API key</span>
+                                        </button>
                                     </div>
                                     <div className="app-header__dropdown-footer">
                                         <button 
@@ -96,6 +105,11 @@ const Header = () => {
                     <MoreVertical size={24} />
                 </button>
             </div>
+
+            {/* API Key Modal */}
+            {isApiKeyModalOpen && (
+                <ApiKeyModal onClose={() => setIsApiKeyModalOpen(false)} />
+            )}
         </header>
     );
 };

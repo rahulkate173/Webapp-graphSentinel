@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Target, Activity, FileText, Clock, LogOut, UploadCloud } from 'lucide-react';
+import { LayoutDashboard, Target, Activity, FileText, Clock, LogOut, UploadCloud, KeyRound } from 'lucide-react';
 import { useAuth } from '../../auth/hooks/useAuth';
+import ApiKeyModal from './ApiKeyModal';
 import '../styles/sidebar.css';
 
 const navItems = [
@@ -16,6 +17,7 @@ const navItems = [
 const Sidebar = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -43,11 +45,22 @@ const Sidebar = () => {
       </nav>
 
       <div className="app-sidebar__footer">
+        <button
+          className="app-sidebar__link app-sidebar__apikey-btn"
+          onClick={() => setIsApiKeyModalOpen(true)}
+        >
+          <KeyRound size={20} strokeWidth={2} className="app-sidebar__link-icon" />
+          <span className="app-sidebar__link-text">Get API key</span>
+        </button>
         <button className="app-sidebar__link app-sidebar__logout-btn" onClick={handleLogout}>
           <LogOut size={20} strokeWidth={2} className="app-sidebar__link-icon" style={{ color: '#ef4444' }} />
           <span className="app-sidebar__link-text" style={{ color: '#ef4444' }}>Logout</span>
         </button>
       </div>
+
+      {isApiKeyModalOpen && (
+        <ApiKeyModal onClose={() => setIsApiKeyModalOpen(false)} />
+      )}
     </aside>
   );
 };
