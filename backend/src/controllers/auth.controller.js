@@ -84,4 +84,12 @@ async function LogoutController(req, res) {
     res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'none' });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 }
-export default { RegisterController, LoginController, GetMeController, LogoutController }
+async function GetApiKeyController(req, res) {
+    const user = await userModel.findById(req.user._id).select('api_key');
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json({ success: true, api_key: user.api_key });
+}
+
+export default { RegisterController, LoginController, GetMeController, LogoutController, GetApiKeyController }

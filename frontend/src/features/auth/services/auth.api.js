@@ -25,3 +25,7 @@ export const logoutUser = async () => {
 export const getCurrentUser = async () => {
   return await api.get('/auth/me');
 };
+
+export const getApiKey = async () => {
+  return await api.get('/auth/api-key');
+};

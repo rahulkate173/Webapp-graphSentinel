@@ -7,5 +7,6 @@
  AuthRouter.post('/login',authController.LoginController)
  AuthRouter.post('/logout', authController.LogoutController)
  AuthRouter.get('/me', authMiddleware.protect, authController.GetMeController)
+ AuthRouter.get('/api-key', authMiddleware.protect, authController.GetApiKeyController)
  
  export default AuthRouter
