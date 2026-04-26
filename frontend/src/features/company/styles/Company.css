@@ -1,0 +1,305 @@
+/* Company Pages (About Us, Contact Us) */
+.company-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FAFBFC;
+}
+
+.company-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8rem 2rem 5rem;
+}
+
+.company-hero {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(11, 28, 51, 0.08);
+}
+
+.company-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #0B1C33;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.company-hero-sub {
+  font-size: 1.3rem;
+  color: rgba(11, 28, 51, 0.6);
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.company-section {
+  margin-bottom: 4rem;
+}
+
+.company-section h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0B1C33;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.015em;
+}
+
+.company-section p {
+  font-size: 1.1rem;
+  color: rgba(11, 28, 51, 0.72);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.company-section ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.company-section li {
+  font-size: 1.05rem;
+  color: rgba(11, 28, 51, 0.72);
+  line-height: 1.8;
+  margin-bottom: 0.4rem;
+}
+
+/* Value Cards Grid */
+.company-values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.company-value-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 28, 51, 0.06);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.company-value-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(11, 28, 51, 0.08);
+  border-color: rgba(255, 94, 94, 0.15);
+}
+
+.company-value-icon {
+  color: #FF5E5E;
+  margin-bottom: 1rem;
+}
+
+.company-value-card h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0B1C33;
+  margin-bottom: 0.5rem;
+}
+
+.company-value-card p {
+  font-size: 0.95rem;
+  color: rgba(11, 28, 51, 0.65);
+  line-height: 1.6;
+}
+
+/* CTA Section */
+.company-cta-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #0B1C33;
+  border-radius: 20px;
+  color: #FFFFFF;
+}
+
+.company-cta-section h2 {
+  color: #FFFFFF;
+}
+
+.company-cta-section p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+}
+
+.company-cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-outline-company {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  padding: 1rem 2.5rem;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline-company:hover {
+  border-color: #FF5E5E;
+  background: rgba(255, 94, 94, 0.1);
+  color: #FF5E5E;
+}
+
+/* Contact Grid */
+.contact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.contact-info-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.contact-info-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 28, 51, 0.06);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.contact-info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(11, 28, 51, 0.08);
+  border-color: rgba(255, 94, 94, 0.15);
+}
+
+.contact-info-icon {
+  color: #FF5E5E;
+  margin-bottom: 1rem;
+}
+
+.contact-info-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0B1C33;
+  margin-bottom: 0.5rem;
+}
+
+.contact-info-card p {
+  font-size: 1rem;
+  color: rgba(11, 28, 51, 0.75);
+  margin-bottom: 0.25rem;
+}
+
+.contact-info-note {
+  font-size: 0.85rem;
+  color: rgba(11, 28, 51, 0.45);
+  font-weight: 500;
+}
+
+/* Contact Form */
+.contact-form-section h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0B1C33;
+  margin-bottom: 1.5rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.contact-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-form-group label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0B1C33;
+}
+
+.contact-form-group input,
+.contact-form-group textarea {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  border: 1.5px solid rgba(11, 28, 51, 0.12);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: #0B1C33;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.contact-form-group input:focus,
+.contact-form-group textarea:focus {
+  outline: none;
+  border-color: #FF5E5E;
+  box-shadow: 0 0 0 3px rgba(255, 94, 94, 0.1);
+}
+
+.contact-form-group input::placeholder,
+.contact-form-group textarea::placeholder {
+  color: rgba(11, 28, 51, 0.35);
+}
+
+.contact-form-group textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem 2.5rem;
+  background: #0B1C33;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 100px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.contact-submit-btn:hover {
+  background: #FF5E5E;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 94, 94, 0.3);
+}
+
+@media (max-width: 768px) {
+  .company-content {
+    padding: 7rem 1.25rem 3rem;
+  }
+  .company-hero h1 {
+    font-size: 2.25rem;
+  }
+  .company-values-grid {
+    grid-template-columns: 1fr;
+  }
+  .contact-info-cards {
+    grid-template-columns: 1fr;
+  }
+  .contact-form-row {
+    grid-template-columns: 1fr;
+  }
+}

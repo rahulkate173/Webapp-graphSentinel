@@ -1,0 +1,349 @@
+/* Documentation Page */
+.docs-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FAFBFC;
+}
+
+.docs-layout {
+  display: flex;
+  padding-top: 7rem;
+  min-height: calc(100vh - 7rem);
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* Sidebar */
+.docs-sidebar {
+  width: 280px;
+  min-width: 280px;
+  position: sticky;
+  top: 7rem;
+  height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  border-right: 1px solid rgba(11, 28, 51, 0.08);
+  background: #FFFFFF;
+}
+
+.docs-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #FF5E5E;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+.docs-back-btn:hover {
+  color: #e55454;
+}
+
+.docs-sidebar__title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(11, 28, 51, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.docs-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.docs-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: rgba(11, 28, 51, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.docs-sidebar__link:hover {
+  background: rgba(255, 94, 94, 0.06);
+  color: #FF5E5E;
+}
+
+/* Main Content */
+.docs-content {
+  flex: 1;
+  padding: 3rem 4rem 6rem;
+  max-width: 900px;
+}
+
+.docs-hero {
+  margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(11, 28, 51, 0.08);
+}
+
+.docs-hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0B1C33;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.docs-hero p {
+  font-size: 1.25rem;
+  color: rgba(11, 28, 51, 0.65);
+  line-height: 1.6;
+  max-width: 650px;
+}
+
+/* Sections */
+.docs-section {
+  margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(11, 28, 51, 0.06);
+}
+
+.docs-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0B1C33;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.015em;
+}
+
+.docs-section h2 svg {
+  color: #FF5E5E;
+  flex-shrink: 0;
+}
+
+.docs-section h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0B1C33;
+  margin: 2rem 0 1rem;
+}
+
+.docs-section p {
+  font-size: 1.05rem;
+  color: rgba(11, 28, 51, 0.75);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.docs-section ul,
+.docs-section ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.docs-section li {
+  font-size: 1.05rem;
+  color: rgba(11, 28, 51, 0.75);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.docs-section code {
+  background: rgba(255, 94, 94, 0.08);
+  color: #FF5E5E;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Info Cards */
+.docs-info-card {
+  background: #F0F4F8;
+  border-left: 4px solid #FF5E5E;
+  padding: 1.5rem 2rem;
+  border-radius: 0 12px 12px 0;
+  margin: 1.5rem 0;
+}
+
+.docs-info-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0B1C33;
+  margin-bottom: 0.5rem;
+}
+
+.docs-info-card p {
+  font-size: 0.95rem;
+  color: rgba(11, 28, 51, 0.7);
+  margin-bottom: 0;
+}
+
+.docs-info-card--warning {
+  background: #FFF8F0;
+  border-left-color: #F59E0B;
+}
+
+/* Steps */
+.docs-steps {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: none;
+}
+
+.docs-steps li {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+}
+
+.docs-step-number {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: #0B1C33;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.875rem;
+  margin-top: 0.15rem;
+}
+
+.docs-step-content h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0B1C33;
+  margin-bottom: 0.25rem;
+}
+
+.docs-step-content p {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+/* Tables */
+.docs-table-wrapper {
+  overflow-x: auto;
+  margin: 1rem 0 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(11, 28, 51, 0.08);
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.docs-table th {
+  background: #0B1C33;
+  color: #FFFFFF;
+  padding: 0.875rem 1.25rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.docs-table td {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(11, 28, 51, 0.06);
+  font-size: 0.95rem;
+  color: rgba(11, 28, 51, 0.75);
+}
+
+.docs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-table tr:nth-child(even) {
+  background: rgba(11, 28, 51, 0.02);
+}
+
+/* CTA Section */
+.docs-cta-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #0B1C33;
+  border-radius: 20px;
+  color: #FFFFFF;
+  margin-top: 2rem;
+}
+
+.docs-cta-section h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.docs-cta-section p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+}
+
+.docs-cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-outline-docs {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  padding: 1rem 2.5rem;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline-docs:hover {
+  border-color: #FF5E5E;
+  background: rgba(255, 94, 94, 0.1);
+  color: #FF5E5E;
+}
+
+/* Inline Link */
+.docs-inline-link {
+  color: #FF5E5E;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.2s;
+}
+
+.docs-inline-link:hover {
+  color: #e55454;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .docs-sidebar {
+    display: none;
+  }
+  .docs-content {
+    padding: 2rem 1.5rem 4rem;
+  }
+  .docs-hero h1 {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,163 @@
+/* API Docs Page — extends Documentation.css base styles */
+.api-docs-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FAFBFC;
+}
+
+.api-docs-layout {
+  display: flex;
+  padding-top: 7rem;
+  min-height: calc(100vh - 7rem);
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* API Endpoint Blocks */
+.api-endpoint {
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 28, 51, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.api-endpoint-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.api-method {
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.api-method--get {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.api-method--post {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.api-method--put {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.api-method--delete {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.api-path {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0B1C33;
+  background: rgba(11, 28, 51, 0.04);
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+}
+
+.api-endpoint h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0B1C33;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.api-endpoint p {
+  font-size: 1rem;
+  color: rgba(11, 28, 51, 0.7);
+  line-height: 1.6;
+}
+
+/* Code Blocks */
+.docs-code-block {
+  background: #1A1A2E;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1rem 0 1.5rem;
+}
+
+.docs-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.docs-code-header span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.docs-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.docs-copy-btn:hover {
+  border-color: #FF5E5E;
+  color: #FF5E5E;
+}
+
+.docs-code-block pre {
+  padding: 1.25rem;
+  margin: 0;
+  overflow-x: auto;
+}
+
+.docs-code-block code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.875rem;
+  color: #E2E8F0;
+  line-height: 1.6;
+  background: transparent;
+  padding: 0;
+}
+
+/* Sidebar indent */
+.docs-sidebar__link--indent {
+  padding-left: 2.5rem;
+  font-size: 0.825rem;
+}
+
+/* API Key section highlight */
+.api-key-section {
+  background: linear-gradient(135deg, rgba(255, 94, 94, 0.03), rgba(11, 28, 51, 0.02));
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 94, 94, 0.1);
+}
+
+@media (max-width: 900px) {
+  .api-docs-layout .docs-sidebar {
+    display: none;
+  }
+  .api-docs-layout .docs-content {
+    padding: 2rem 1.5rem 4rem;
+  }
+}
