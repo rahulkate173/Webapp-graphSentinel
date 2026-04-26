@@ -30,45 +30,66 @@ const FraudGraphView = ({ ring, onClose, suspicious_accounts }) => {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const { nodes, edges } = useMemo(() => {
-    // 1. Collect all unique account IDs that appear in this ring
-    const ringAccounts = (suspicious_accounts || []).filter(
-      (a) => a.ring_id === ring.ring_id
-    );
+    // New API: accounts and transactions are directly on the ring object
+    const ringAccounts = ring.accounts || ring._accounts || [];
+    const ringTransactions = ring.transactions || [];
 
-    // Collect all unique account IDs (senders + receivers) from transactions
+    // Collect all unique account IDs from accounts + transactions
     const allIds = new Set(ringAccounts.map((a) => a.account_id));
-    ringAccounts.forEach((acc) => {
-      (acc.transactions || []).forEach((tx) => {
-        allIds.add(tx.sender_id);
-        allIds.add(tx.receiver_id);
-      });
+    ringTransactions.forEach((tx) => {
+      if (tx.sender_id) allIds.add(tx.sender_id);
+      if (tx.receiver_id) allIds.add(tx.receiver_id);
     });
-
-    // Also include member_accounts that may not have suspicion entries
-    (ring.member_accounts || []).forEach((id) => allIds.add(id));
 
     const idList = Array.from(allIds);
+    if (idList.length === 0) return { nodes: [], edges: [] };
+
     const positions = radialLayout(idList);
 
-    // Score lookup
+    // Score lookup from ring accounts
     const scoreMap = {};
+    const roleMap = {};
     ringAccounts.forEach((a) => {
       scoreMap[a.account_id] = a.suspicion_score || 0;
+      roleMap[a.account_id] = a.role || '';
     });
+
+    // Origin / exit: prefer flow_analysis IDs, fall back to role field in accounts
+    const originFromFlow = ring.flow_analysis?.origin_node;
+    const exitFromFlow   = ring.flow_analysis?.exit_node;
+
+    // Fallback: find by role string inside accounts array
+    const originFromRole = ringAccounts.find(
+      (a) => a.role === 'Originator' || a.role === 'Origin'
+    )?.account_id;
+    const exitFromRole = ringAccounts.find(
+      (a) => a.role === 'Exit Point' || a.role === 'Exit'
+    )?.account_id;
+
+    const originNode = originFromFlow || originFromRole;
+    const exitNode   = exitFromFlow   || exitFromRole;
 
     // 2. Build nodes
     const nodesData = idList.map((id) => {
       const score = scoreMap[id] || 0;
       const { bg, border } = nodeColor(score);
       const isCentral = score >= 80;
+      const isOrigin = id === originNode;
+      // Only mark as exit if it's a different node from origin
+      const isExit = id === exitNode && exitNode !== originNode;
+
+      let label = id.length > 14 ? id.slice(-8) : id;
+      if (isOrigin) label += '\n↑ Origin';
+      else if (isExit) label += '\n↓ Exit Point';
+
       return {
         id,
-        position: positions[id],
-        data: { label: id, score },
+        position: positions[id] || { x: 0, y: 0 },
+        data: { label, score },
         style: {
-          background: bg,
+          background: isOrigin ? '#7b1fa2' : isExit ? '#2e7d32' : bg,
           color: 'white',
-          border: `${isCentral ? 4 : 2}px solid ${border}`,
+          border: `${isCentral ? 4 : 2}px solid ${isOrigin ? '#ce93d8' : isExit ? '#66bb6a' : border}`,
           borderRadius: '50%',
           width: isCentral ? 56 : 38,
           height: isCentral ? 56 : 38,
@@ -82,29 +103,28 @@ const FraudGraphView = ({ ring, onClose, suspicious_accounts }) => {
       };
     });
 
-    // 3. Build edges from real transactions
+    // 3. Build edges from ring.transactions (deduplicated by sender->receiver pair)
     const edgesData = [];
     const edgeSeen = new Set();
-    ringAccounts.forEach((acc) => {
-      (acc.transactions || []).forEach((tx) => {
-        const edgeId = `${tx.sender_id}->${tx.receiver_id}`;
-        if (edgeSeen.has(edgeId)) return;
-        edgeSeen.add(edgeId);
-        edgesData.push({
-          id: tx.transaction_id || edgeId,
-          source: tx.sender_id,
-          target: tx.receiver_id,
-          animated: true,
-          label: `$${(tx.amount || 0).toLocaleString()}`,
-          labelStyle: { fill: '#ccc', fontSize: 10 },
-          style: { stroke: '#888', strokeWidth: 2 },
-          markerEnd: { type: MarkerType.ArrowClosed, color: '#888' },
-        });
+    ringTransactions.forEach((tx) => {
+      if (!tx.sender_id || !tx.receiver_id) return;
+      const edgeKey = `${tx.sender_id}->${tx.receiver_id}`;
+      if (edgeSeen.has(edgeKey)) return;
+      edgeSeen.add(edgeKey);
+      edgesData.push({
+        id: tx.transaction_id || edgeKey,
+        source: tx.sender_id,
+        target: tx.receiver_id,
+        animated: true,
+        label: `$${(tx.amount || 0).toLocaleString()}`,
+        labelStyle: { fill: '#ccc', fontSize: 10 },
+        style: { stroke: '#888', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#888' },
       });
     });
 
     return { nodes: nodesData, edges: edgesData };
-  }, [ring, suspicious_accounts]);
+  }, [ring]);
 
   // Details for selected node
   const selectedAccount = suspicious_accounts?.find((a) => a.account_id === selectedNode);

@@ -5,7 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 /**
  * Calls the backend upload endpoint which:
  *  1. Uploads both CSVs to Cloudinary
- *  2. Sends URLs to the real ML API at https://graphsentinel-server.onrender.com
+ *  2. Sends URLs to the real ML API at https://webapp-graphsentinel.onrender.com
  *  3. Returns the full analysis result
  *
  * This is now the single source of truth for ML results — NO dummy data.

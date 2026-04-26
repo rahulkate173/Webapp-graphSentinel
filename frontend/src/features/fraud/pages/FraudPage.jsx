@@ -18,31 +18,25 @@ const FraudPage = () => {
   const [membersModalData, setMembersModalData] = useState(null);
   const [transactionsModalData, setTransactionsModalData] = useState(null);
 
-  // ── Enrich fraud rings with account + transaction objects from ML data ────────
+  // ── Enrich fraud rings — new ML response has ring.accounts + ring.transactions ──
   const enrichedRings = fraud_rings.map((ring) => {
-    const stringIds = ring.member_accounts || [];
+    // New API: accounts array is directly on the ring object
+    const accounts = ring.accounts || [];
 
-    // Map over every string ID in the ring
-    let ringAccounts = stringIds.map((accountId) => {
-      // Find the detailed object for this account if it exists in suspicious_accounts
-      if (suspicious_accounts && suspicious_accounts.length > 0) {
-        const detailedAcc = suspicious_accounts.find(
-          (acc) => acc.account_id === accountId || (acc.ring_id === ring.ring_id && acc.account_id === accountId)
-        );
-        if (detailedAcc) return detailedAcc; // Use the rich object
-      }
-      return accountId; // Fallback to plain string ID
-    });
+    // Derive risk_score from max suspicion_score across ring members
+    const maxScore = accounts.reduce((m, a) => Math.max(m, a.suspicion_score || 0), 0);
+    const risk_score = Math.min(100, Math.round(maxScore));
 
-    // Also include any suspicious_accounts that claim to be in this ring but weren't in member_accounts
-    if (suspicious_accounts && suspicious_accounts.length > 0) {
-      const extraAccounts = suspicious_accounts.filter(
-        (acc) => acc.ring_id === ring.ring_id && !stringIds.includes(acc.account_id)
-      );
-      ringAccounts.push(...extraAccounts);
-    }
+    // Pattern comes from ring.context.pattern_identified (new API)
+    // Fall back to ring.pattern_type for backward compat with old saved data
+    const pattern_type = ring.context?.pattern_identified || ring.pattern_type || 'Unknown';
 
-    return { ...ring, _accounts: ringAccounts };
+    return {
+      ...ring,
+      risk_score,
+      pattern_type,
+      _accounts: accounts,         // alias for components that read _accounts
+    };
   });
 
   const openMembersModal = (ring) => {
@@ -50,13 +44,8 @@ const FraudPage = () => {
   };
 
   const openTransactionsModal = (ring) => {
-    const allTx = [];
-    if (ring._accounts && ring._accounts.length > 0) {
-      ring._accounts.forEach((acc) => {
-        if (acc.transactions) allTx.push(...acc.transactions);
-      });
-    }
-    setTransactionsModalData({ ring, transactions: allTx });
+    // New API: transactions are directly on ring object
+    setTransactionsModalData({ ring, transactions: ring.transactions || [] });
   };
 
   return (
@@ -154,7 +143,7 @@ const FraudPage = () => {
             )}
 
             {/* ── Stats + Table (only shown after real ML result) ───────────── */}
-            {analysisRun && summary && !loading && (
+            {analysisRun && !loading && (
               <>
                 <FraudStats summary={summary} suspicious_accounts={suspicious_accounts} />
                 <FraudTable

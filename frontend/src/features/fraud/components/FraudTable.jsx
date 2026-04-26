@@ -77,10 +77,8 @@ const FraudTable = ({ rings, onViewGraph, onViewMembers, onViewTransactions }) =
               </tr>
             )}
             {rings.map((ring, idx) => {
-              const memberCount = ring.member_accounts?.length ?? 0;
-              const txCount = ring._accounts?.reduce(
-                (s, a) => s + (a.transactions?.length || 0), 0
-              ) ?? 0;
+              const memberCount = ring._accounts?.length ?? 0;
+              const txCount = ring.transactions?.length ?? 0;
 
               return (
                 <tr key={idx}>
@@ -131,8 +129,10 @@ const FraudTable = ({ rings, onViewGraph, onViewMembers, onViewTransactions }) =
                       onClick={() => onViewMembers(ring)}
                       title="Click to view all members"
                     >
-                      {(ring.member_accounts || []).slice(0, 3).map((acc, i) => (
-                        <span key={i} className="member-badge">{acc}</span>
+                      {(ring._accounts || []).slice(0, 3).map((acc, i) => (
+                        <span key={i} className="member-badge">
+                          {typeof acc === 'string' ? acc : acc.account_id}
+                        </span>
                       ))}
                       {memberCount > 3 && (
                         <span className="member-badge more-badge">+{memberCount - 3} more</span>

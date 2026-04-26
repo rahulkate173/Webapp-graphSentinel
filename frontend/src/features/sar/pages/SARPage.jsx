@@ -86,8 +86,14 @@ const SARPage = () => {
         fraudRings[Number(ringId)] ||
         null;
 
-      if (matched && Array.isArray(matched.member_accounts)) {
-        accountNumbers = matched.member_accounts.map(String);
+      if (matched) {
+        if (Array.isArray(matched.accounts) && matched.accounts.length > 0) {
+          // New ML API: accounts are objects with account_id field
+          accountNumbers = matched.accounts.map((a) => String(a.account_id || a));
+        } else if (Array.isArray(matched.member_accounts)) {
+          // Old API fallback: member_accounts is a plain string array
+          accountNumbers = matched.member_accounts.map(String);
+        }
       }
     }
 

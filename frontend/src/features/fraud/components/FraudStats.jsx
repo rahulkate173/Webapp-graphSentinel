@@ -2,9 +2,12 @@ import React from 'react';
 
 const FraudStats = ({ summary, suspicious_accounts }) => {
   // ── Derive computed values from ML data ──────────────────────────────────
-  const totalSuspicious = summary?.suspicious_accounts_flagged ?? 0;
+  // Fallback: count directly from the arrays when summary fields are missing
+  const totalSuspicious = summary?.suspicious_accounts_flagged
+    ?? (suspicious_accounts?.length || 0);
   const totalAnalyzed   = summary?.total_accounts_analyzed ?? 0;
-  const ringsDetected   = summary?.fraud_rings_detected ?? 0;
+  const ringsDetected   = summary?.fraud_rings_detected
+    ?? 0; // will be overridden by the badge in the header anyway
   const processingTime  = summary?.processing_time_seconds ?? 0;
 
   // Average suspicion score across all flagged accounts
