@@ -17,10 +17,12 @@ export function initSocket(httpServer) {
         "http://localhost:5174",
         "http://localhost:4173",
         "https://graph-sentinal.vercel.app",
+        "https://webapp-graph-sentinel.vercel.app"
       ],
       methods: ["GET", "POST"],
       credentials: true,
     },
+    pingTimeout: 60000, // Helps with Render connection drops
   });
 
   io.on("connection", (socket) => {

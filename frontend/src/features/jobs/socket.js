@@ -9,6 +9,7 @@ const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentine
 const socket = io(BACKEND_URL, {
   autoConnect: false,
   withCredentials: true,
+  transports: ['websocket'], // Prevent xhr polling errors
 });
 
 export default socket;
