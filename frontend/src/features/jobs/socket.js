@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com';
 
 /**
  * Single shared socket instance for the entire app.
