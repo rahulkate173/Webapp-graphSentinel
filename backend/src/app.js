@@ -7,6 +7,7 @@ import Uploaderouter from './routes/upload.routes.js'
 import PricingRouter from './routes/pricing.routes.js'
 import SARRouter from './routes/sar.routes.js'
 import HistoryRouter from './routes/history.routes.js'
+import DashboardRouter from './routes/dashboard.routes.js'
 
 const app = express()
 
@@ -29,5 +30,6 @@ app.use('/api/files', Uploaderouter)
 app.use('/api/pricing', PricingRouter)
 app.use('/api/sar', SARRouter)
 app.use('/api/history', HistoryRouter)
+app.use('/api/dashboard', DashboardRouter)
 
 export default app

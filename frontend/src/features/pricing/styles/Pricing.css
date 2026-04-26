@@ -1,0 +1,129 @@
+.pricing-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f3f8; /* Light grayish blue background based on screenshot */
+  padding: 2rem;
+  font-family: inherit;
+}
+
+.pricing-content {
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  gap: 4rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .pricing-content {
+    flex-direction: column;
+  }
+}
+
+.pricing-text-section {
+  flex: 1;
+  max-width: 500px;
+  color: #1f2937;
+}
+
+.pricing-text-section h1 {
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: #2b3b4f;
+}
+
+.pricing-text-section p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.pricing-form-section {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  width: 100%;
+}
+
+.pricing-form-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pricing-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-input-group input,
+.pricing-input-group textarea {
+  width: 100%;
+  padding: 0.75rem 0;
+  border: none;
+  border-bottom: 1px solid #d1d5db;
+  background-color: transparent;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.3s ease;
+}
+
+.pricing-input-group input:focus,
+.pricing-input-group textarea:focus {
+  outline: none;
+  border-bottom: 1px solid #FF5E5E; /* Matching GraphSentinel red */
+}
+
+.pricing-input-group input::placeholder,
+.pricing-input-group textarea::placeholder {
+  color: #9ca3af;
+}
+
+.pricing-input-group textarea {
+  resize: vertical;
+  min-height: 40px;
+}
+
+.pricing-submit-btn {
+  background-color: #FF5E5E;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.3s;
+  margin-top: 1rem;
+}
+
+.pricing-submit-btn:hover {
+  background-color: #e04b4b;
+}
+
+.pricing-submit-btn:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+}
+
+.submit-success {
+  color: #10b981;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.submit-error {
+  color: #ef4444;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}

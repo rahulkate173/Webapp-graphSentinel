@@ -27,7 +27,7 @@ function uploadToCloudinary(buffer, originalname) {
 
 // ── Helper: call real ML microservice ─────────────────────────────────────────
 async function callMLAPI(transactionsUrl, accountsUrl) {
-  const response = await fetch("https://graphsentinel-server.onrender.com/predict", {
+  const response = await fetch("https://webapp-graphsentinel.onrender.com/predict", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -84,7 +84,7 @@ async function uploadController(req, res) {
     console.log("[Cloudinary] accounts URL:", accountsUrl);
 
     // ── 3. Call real ML API ────────────────────────────────────────────────────
-    console.log("[ML API] Sending URLs to https://graphsentinel-server.onrender.com …");
+    console.log("[ML API] Sending URLs to https://webapp-graphsentinel.onrender.com …");
     const mlResult = await callMLAPI(transactionsUrl, accountsUrl);
     console.log("[ML API] Response received:");
     console.log(JSON.stringify(mlResult, null, 2));
