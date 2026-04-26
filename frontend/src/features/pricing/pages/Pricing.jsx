@@ -60,24 +60,26 @@ const Pricing = () => {
 
   return (
     <div className="landing-page" style={{ backgroundColor: '#f1f3f8', backgroundImage: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Navbar specific to Landing Page */}
-      <header className="landing-nav" style={{ position: 'relative', backgroundColor: 'transparent', width: '100%' }}>
-        <div className="landing-nav__logo" onClick={() => navigate('/')}>
-          <Network size={28} strokeWidth={2.5} className="landing-nav__logo-icon" />
-          <span>GraphSentinel</span>
-        </div>
-        <nav className="landing-nav__links">
-          <a href="/#features" onClick={() => navigate('/')}>Features</a>
-          <a href="/#how-it-works" onClick={() => navigate('/')}>How it works</a>
-          <a href="/pricing" onClick={(e) => { e.preventDefault(); navigate('/pricing'); }}>Pricing</a>
-        </nav>
-        <div className="landing-nav__actions">
-          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Log in</a>
-          <button className="btn btn-primary" onClick={() => navigate('/register')}>
-            Get Started
-          </button>
-        </div>
-      </header>
+      {/* Navbar */}
+      <div className="navbar-wrapper">
+        <header className="landing-nav">
+          <div className="landing-nav__logo" onClick={() => navigate('/')}>
+            <Network size={24} strokeWidth={2.5} className="landing-nav__logo-icon" />
+            <span>GraphSentinel</span>
+          </div>
+          <nav className="landing-nav__links">
+            <a href="/#features" data-hover="Features" onClick={() => navigate('/')}><span>Features</span></a>
+            <a href="/#how-it-works" data-hover="How it works" onClick={() => navigate('/')}><span>How it works</span></a>
+            <a href="/pricing" data-hover="Pricing" onClick={(e) => { e.preventDefault(); navigate('/pricing'); }}><span>Pricing</span></a>
+          </nav>
+          <div className="landing-nav__actions">
+            <button className="btn btn-login" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Log in</button>
+            <button className="btn btn-primary" onClick={() => navigate('/register')}>
+              Get Started
+            </button>
+          </div>
+        </header>
+      </div>
 
       <div className="pricing-container" style={{ flex: 1 }}>
         <div className="pricing-content">
@@ -191,37 +193,68 @@ const Pricing = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="footer" style={{ marginTop: 'auto' }}>
-        <div className="container footer-grid">
-          <div className="footer-col">
-            <div className="footer-brand">
-              <Network size={28} strokeWidth={2.5} />
+      {/* Footer (Armor.shop dark style) */}
+      <footer className="footer armor-footer" style={{ marginTop: 'auto' }}>
+        <div className="container armor-footer-container">
+          
+          <div className="armor-footer-brand-section">
+            <div className="armor-footer-logo">
+              <Network size={40} strokeWidth={3} className="text-white" />
               <span>GraphSentinel</span>
             </div>
-            <p className="footer-desc">Advanced graph-based fraud detection for the modern financial stack.</p>
+            <p className="armor-footer-mission">
+              GraphSentinel builds expressive, design-driven tech for financial institutions, risk teams, and the curious.
+            </p>
+            <div className="armor-footer-company-info">
+              GraphSentinel Inc.<br/>
+              Registered Office: 39, Shivkrupa, Swami Vivekanand Society, Pune, Maharashtra 411009, India<br/>
+              Contact: +91 9511631215 | Email: graphsential@gmail.com<br/>
+              (Mon-Sat, 11 AM - 7 PM)
+            </div>
           </div>
-          <div className="footer-col">
-            <h4>Products</h4>
-            <a href="#">Card Payment Fraud</a>
-            <a href="#">Merchant Initiated Fraud</a>
-            <a href="#">Money Mule Detection</a>
+
+          <div className="armor-footer-links-section">
+            <div className="armor-footer-col">
+              <h4>products</h4>
+              <a href="#">card payment fraud</a>
+              <a href="#">merchant initiated fraud</a>
+              <a href="#">money mule detection</a>
+              <a href="#">api documentation</a>
+            </div>
+            
+            <div className="armor-footer-col">
+              <h4>company</h4>
+              <a href="#">about us</a>
+              <a href="#">careers</a>
+              <a href="#">contact us</a>
+              <a href="#">blog</a>
+            </div>
+
+            <div className="armor-footer-col">
+              <h4>socials</h4>
+              <a href="#">instagram</a>
+              <a href="#">youtube</a>
+              <a href="#">linkedin</a>
+              <a href="#">github</a>
+            </div>
+
+            <div className="armor-footer-col">
+              <h4>quick links</h4>
+              <a href="#">privacy policy</a>
+              <a href="#">terms of service</a>
+              <a href="#">help center</a>
+              <a href="#">community</a>
+            </div>
           </div>
-          <div className="footer-col">
-            <h4>Company</h4>
-            <a href="#">About us</a>
-            <a href="#">Contact Us</a>
-            <a href="#">Privacy Policy</a>
-          </div>
-          <div className="footer-col">
-            <h4>Resources</h4>
-            <a href="#">Blog</a>
-            <a href="#">Case Studies</a>
-            <a href="#">Documentation</a>
-          </div>
+          
         </div>
-        <div className="container footer-bottom">
-          <p>&copy; {new Date().getFullYear()} GraphSentinel. All rights reserved.</p>
+        
+        <div className="container armor-footer-bottom">
+          <p>&copy; {new Date().getFullYear()} Managed by GraphSentinel Inc. All rights reserved.</p>
+          <div className="armor-footer-bottom-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+          </div>
         </div>
       </footer>
     </div>

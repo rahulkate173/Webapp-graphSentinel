@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   background-color: #f1f3f8; /* Light grayish blue background based on screenshot */
-  padding: 2rem;
+  padding: 8rem 2rem 2rem 2rem; /* Added top padding for fixed nav */
   font-family: inherit;
 }
 
