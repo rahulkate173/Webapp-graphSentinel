@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+
 import { LayoutDashboard, Target, Activity, FileText, Clock, LogOut, UploadCloud, KeyRound } from 'lucide-react';
+
 import { useAuth } from '../../auth/hooks/useAuth';
 import ApiKeyModal from './ApiKeyModal';
 import '../styles/sidebar.css';
@@ -12,6 +14,7 @@ const navItems = [
   { name: 'Jobs', path: '/jobs', icon: Activity },
   { name: 'History', path: '/history', icon: Clock },
   { name: 'SAR Report', path: '/sar', icon: FileText },
+  { name: 'API Docs', path: '/api-docs', icon: Code },
 ];
 
 const Sidebar = () => {

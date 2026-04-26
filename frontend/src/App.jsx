@@ -11,6 +11,12 @@ import FraudPage from './features/fraud/pages/FraudPage';
 import JobMonitorPage from './features/jobs/pages/JobMonitorPage';
 import SARPage from './features/sar/pages/SARPage';
 import HistoryPage from './features/history/pages/HistoryPage';
+import Documentation from './features/documentation/pages/Documentation';
+import ApiDocs from './features/api/pages/ApiDocs';
+import PrivacyPolicy from './features/legal/pages/PrivacyPolicy';
+import Terms from './features/legal/pages/Terms';
+import About from './features/company/pages/About';
+import Contact from './features/company/pages/Contact';
 import { useAuth } from './features/auth/hooks/useAuth';
 
 const App = () => {
@@ -28,6 +34,14 @@ const App = () => {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Public pages */}
+        <Route path="/docs" element={<Documentation />} />
+        <Route path="/api-docs" element={<ApiDocs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* Protected: analytics dashboard overview */}
         <Route
