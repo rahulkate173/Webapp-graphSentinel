@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
-import { LayoutDashboard, Target, Activity, FileText, Clock, LogOut, UploadCloud, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Target, Activity, FileText, Clock, LogOut, UploadCloud, KeyRound, Code } from 'lucide-react';
 
 import { useAuth } from '../../auth/hooks/useAuth';
 import ApiKeyModal from './ApiKeyModal';

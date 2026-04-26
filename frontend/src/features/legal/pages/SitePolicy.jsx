@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Network, Shield } from 'lucide-react';
 import '../styles/Legal.css';
 
-const PrivacyPolicy = () => {
+const SitePolicy = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -228,4 +228,4 @@ const PrivacyPolicy = () => {
   );
 };
 
-export default PrivacyPolicy;
+export default SitePolicy;

@@ -13,7 +13,7 @@ import SARPage from './features/sar/pages/SARPage';
 import HistoryPage from './features/history/pages/HistoryPage';
 import Documentation from './features/documentation/pages/Documentation';
 import ApiDocs from './features/api/pages/ApiDocs';
-import PrivacyPolicy from './features/legal/pages/PrivacyPolicy';
+import SitePolicy from './features/legal/pages/SitePolicy';
 import Terms from './features/legal/pages/Terms';
 import About from './features/company/pages/About';
 import Contact from './features/company/pages/Contact';
@@ -38,7 +38,7 @@ const App = () => {
         {/* Public pages */}
         <Route path="/docs" element={<Documentation />} />
         <Route path="/api-docs" element={<ApiDocs />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/privacy-policy" element={<SitePolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
