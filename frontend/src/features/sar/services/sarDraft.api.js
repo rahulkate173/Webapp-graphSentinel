@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com';
 
 const apiClient = axios.create({
-  baseURL: `${API_URL}/sar`,
+  baseURL: `${BASE_URL}/api/sar`,
   withCredentials: true,
 });
 

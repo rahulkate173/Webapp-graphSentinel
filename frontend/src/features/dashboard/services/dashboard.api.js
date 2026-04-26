@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://webapp-graphsentinel-1.onrender.com';
 
 // withCredentials ensures the browser sends the httpOnly cookie automatically
 const apiClient = axios.create({
-  baseURL: `${API_URL}/dashboard`,
+  baseURL: `${BASE_URL}/api/dashboard`,
   withCredentials: true,
 });
 
