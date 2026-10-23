@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="GraphSentinel",
     description="AML Detection API using EdgeGAT Graph Neural Network",
-    version="1.0.0",
+    version="3.0.0",
     lifespan=lifespan,
 )
 
