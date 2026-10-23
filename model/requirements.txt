@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 torch
 torch-geometric
+xgboost
 pandas
 numpy
 httpx
