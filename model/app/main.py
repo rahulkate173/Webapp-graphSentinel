@@ -1,5 +1,6 @@
 """
-GraphSentinel — FastAPI inference server for AML detection using EdgeGAT.
+GraphSentinel — FastAPI inference server for AML detection.
+Supports both the XGBoost HI-Medium model and the legacy EdgeGAT model.
 """
 
 # IMPORTANT: Import torch first on Windows to avoid DLL WinError 1114
@@ -19,7 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import MAX_CSV_SIZE_MB
 from app.graph_builder import preprocess, build_graph, move_to_device
 from app.inference import run_inference
-from app.model_loader import load_model
+from app.model_loader import XGBAMLModel, load_model
 from app.schemas import (
     HealthResponse,
     PredictRequest,
@@ -95,13 +96,13 @@ async def predict(request: PredictRequest):
     Run AML detection on a transaction CSV.
 
     Accepts a Cloudinary (or any public) CSV URL, downloads it,
-    builds a transaction graph, runs EdgeGAT inference, detects
-    fraud rings, and returns a structured report.
+    runs inference (XGBoost or legacy EdgeGAT depending on the loaded model),
+    detects fraud rings, and returns a structured report.
     """
     if _model is None:
         raise HTTPException(
             status_code=503,
-            detail="Model not loaded. Place a .pth file in the models/ directory and restart.",
+            detail="Model not loaded. Place a .pt/.pth file in the models/ directory and restart.",
         )
 
     transactions_csv_url = str(request.transactions_csv_url)
@@ -141,10 +142,21 @@ async def predict(request: PredictRequest):
     )
 
     # ── 2. Validate required columns ─────────────────────────────────────
-    trans_cols = [
-        "Timestamp", "From Bank", "Account", "To Bank", "Account.1",
-        "Amount Paid", "Payment Currency", "Payment Format",
-    ]
+    is_xgb = isinstance(_model, XGBAMLModel)
+
+    # XGBoost needs Amount Received + Receiving Currency for feature engineering
+    if is_xgb:
+        trans_cols = [
+            "Timestamp", "From Bank", "Account", "To Bank", "Account.1",
+            "Amount Received", "Receiving Currency",
+            "Amount Paid", "Payment Currency", "Payment Format",
+        ]
+    else:
+        trans_cols = [
+            "Timestamp", "From Bank", "Account", "To Bank", "Account.1",
+            "Amount Paid", "Payment Currency", "Payment Format",
+        ]
+
     missing_trans = [c for c in trans_cols if c not in trans_df.columns]
     if missing_trans:
         raise HTTPException(
@@ -152,15 +164,30 @@ async def predict(request: PredictRequest):
             detail=f"Transactions CSV missing required columns: {missing_trans}",
         )
 
+    # Accounts CSV: strict validation for EdgeGAT; optional for XGBoost
+    # (entity features gracefully degrade to NaN when columns are absent)
     accounts_cols = ["Bank ID", "Account Number", "Entity ID", "Entity Name"]
     missing_acc = [c for c in accounts_cols if c not in accounts_df.columns]
-    if missing_acc:
+    if missing_acc and not is_xgb:
         raise HTTPException(
             status_code=422,
             detail=f"Accounts CSV missing required columns: {missing_acc}",
         )
 
-    # ── 3. Preprocess + build graph ──────────────────────────────────────
+    # ── 3a. XGBoost path: pass raw DataFrames directly ───────────────────
+    if is_xgb:
+        try:
+            # accounts_df is passed as-is; build_features handles missing columns gracefully
+            report = run_inference(_model, trans_df, accounts_df=accounts_df)
+        except Exception as e:
+            traceback.print_exc()
+            raise HTTPException(
+                status_code=500,
+                detail=f"Inference failed: {str(e)}",
+            )
+        return report
+
+    # ── 3b. Legacy EdgeGAT path: build PyG graph first ───────────────────
     try:
         df_clean, _, _ = preprocess(trans_df, accounts_df)
         graph_data = build_graph(df_clean)
