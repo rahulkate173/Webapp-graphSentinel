@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.preprocessing import LabelEncoder
-from torch_geometric.data import Data
 
 from app.config import DEVICE
 
@@ -64,7 +63,7 @@ def preprocess(trans_df: pd.DataFrame, accounts_df: pd.DataFrame) -> tuple[pd.Da
     return df, le_payment, le_currency
 
 
-def build_graph(df: pd.DataFrame) -> Data:
+def build_graph(df: pd.DataFrame):
     """
     Build a PyG Data object from the preprocessed DataFrame.
 
@@ -73,6 +72,7 @@ def build_graph(df: pd.DataFrame) -> Data:
     Edge features: [amount_log, hour, day_of_week, payment_enc_norm, currency_enc_norm]
     Node features: [out-degree, in-degree, sum_sent, sum_received] (normalised)
     """
+    from torch_geometric.data import Data  # lazy import — only needed for EdgeGAT path
     # ── Node index mapping ───────────────────────────────────────────────
     all_accounts = pd.unique(
         pd.concat([df["From_Account"], df["To_Account"]])
@@ -124,7 +124,7 @@ def build_graph(df: pd.DataFrame) -> Data:
     return data
 
 
-def move_to_device(data: Data, device=DEVICE) -> Data:
+def move_to_device(data, device=DEVICE):
     """Move all tensors in the Data object to the target device."""
     data.x = data.x.to(device)
     data.edge_index = data.edge_index.to(device)

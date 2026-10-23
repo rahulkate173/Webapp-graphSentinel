@@ -13,7 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Install CPU-only PyTorch (override if GPU needed)
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-RUN pip install --no-cache-dir torch-geometric
 
 # Optional: download model from Google Drive
 ARG GDRIVE_MODEL_ID=""

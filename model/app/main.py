@@ -3,8 +3,6 @@ GraphSentinel — FastAPI inference server for AML detection.
 Supports both the XGBoost HI-Medium model and the legacy EdgeGAT model.
 """
 
-# IMPORTANT: Import torch first on Windows to avoid DLL WinError 1114
-import torch
 
 import io
 import os

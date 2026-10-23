@@ -8,11 +8,12 @@ when uvicorn loads this module in a subprocess.
 
 import os
 from dotenv import load_dotenv
-import torch
 load_dotenv()
 
 # ── Device (lazy — resolved at first use) ────────────────────────────────
+import torch
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+del torch  # release reference; torch stays loaded but we don't hold the module
 
 # def get_device():
 #     """Lazy torch device resolution to avoid import-time DLL issues on Windows."""
