@@ -1,0 +1,22 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [backend-lint-and-test, frontend-lint-and-build] # Ensures code is verified first
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Trigger Webhook Deployment (e.g., Render / Cloud Provider)
+        run: |
+          if [ -n "${{ secrets.DEPLOY_HOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.DEPLOY_HOOK_URL }}"
+            echo "Deployment webhook triggered successfully."
+          else
+            echo "No deploy hook configured, skipping remote trigger."
+          fi
