@@ -19,7 +19,10 @@ router.post(
 
 router.post(
   "/external-upload-csv",
-  upload.array("files", 2),    // ← multer first: parses multipart body → populates req.body + req.files
+  upload.fields([               // ← named fields so order doesn't matter
+    { name: "transactions", maxCount: 1 },
+    { name: "accounts", maxCount: 1 },
+  ]),
   authMiddleware.verifyAPIKey, // ← now req.body.apiKey is available
   uploadControllers.externalUploadController
 );

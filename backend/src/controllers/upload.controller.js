@@ -152,17 +152,23 @@ async function externalUploadController(req, res) {
   const bankId = String(req.user._id);
   const jobId  = `job_${Date.now()}`;
 
-  const files = req.files;
+  const fileFields = req.files; // { transactions: [File], accounts: [File] }
 
   // ── Quick validation before accepting ─────────────────────────────────────
-  if (!files || files.length !== 2) {
+  const txFile = fileFields?.transactions?.[0];
+  const acFile = fileFields?.accounts?.[0];
+
+  if (!txFile || !acFile) {
     return res.status(400).json({
-      error: "Exactly 2 CSV files are required (transactions + accounts).",
+      error:
+        'Both "transactions" and "accounts" file fields are required. ' +
+        'Upload the transactions CSV under the key "transactions" and ' +
+        'the accounts CSV under the key "accounts".',
     });
   }
 
   const CSV_MIME = ["text/csv", "application/vnd.ms-excel", "application/csv"];
-  for (const f of files) {
+  for (const f of [txFile, acFile]) {
     const isCsvName = f.originalname.toLowerCase().endsWith(".csv");
     const isCsvMime = CSV_MIME.includes(f.mimetype);
     if (!isCsvName && !isCsvMime) {
@@ -177,7 +183,6 @@ async function externalUploadController(req, res) {
 
   // ── Async pipeline (runs after response is sent) ───────────────────────────
   const io = getIO();
-  const [txFile, acFile] = files;
 
   try {
     // 1. Uploading files to Cloudinary
